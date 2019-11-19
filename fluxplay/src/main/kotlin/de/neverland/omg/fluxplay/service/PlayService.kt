@@ -7,8 +7,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Duration
+import java.util.function.BiFunction
+import java.util.stream.Stream
 
 @Service
 class PlayService(
@@ -31,11 +36,33 @@ class PlayService(
     }
 
     @ExperimentalCoroutinesApi
-    fun flowThing(amount: Int): Flow<Thing> = flow {
+    fun flowThing(amount: Int): Flow<Thing> = runBlocking {
+        flow {
+            for (i in 1..amount) {
+                delay(200)
+                println("number $i")
+                emit(thingGenerator.createThing())
+            }
+        }
+    }
+
+    fun fluxThing(amount: Int): Flux<Thing> {
+//        val interval = Flux.interval(Duration.ofSeconds(1))
+        print("inside method - $amount")
+        val things = Flux.fromStream(Stream.generate {
+            println("genearte called")
+            thingGenerator.createThing() })
+                .delayElements(Duration.ofSeconds(1))
+//        val mess = BiFunction<Thing, Long, Thing>{thing, long -> Thread.sleep(long); return@BiFunction thing}
+        return things
+    }
+
+    suspend fun getAmountOfThings(amount: Int): MutableList<Thing> {
+        val things = mutableListOf<Thing>()
         for (i in 1..amount) {
             delay(200)
-            println("number $i")
-            emit(thingGenerator.createThing())
+            things.add(thingGenerator.createThing())
         }
+        return things
     }
 }
