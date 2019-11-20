@@ -19,6 +19,6 @@ class PlayClientApi(val webClient: WebClient) {
             method = [RequestMethod.GET],
             produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     suspend fun startPoll(@PathVariable("amount") amount: Int): Flow<Thing> {
-        return webClient.get().uri("/things/stream/$amount").retrieve().bodyToFlow()
+        return webClient.get().uri("/things/stream/").retrieve().bodyToFlow<Thing>().take(amount)
     }
 }
