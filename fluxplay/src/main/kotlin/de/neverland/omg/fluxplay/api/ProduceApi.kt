@@ -44,31 +44,18 @@ class ProduceApi(
     @ExperimentalCoroutinesApi
     @RequestMapping(path = ["/things/stream/{amount}"],
             method = [RequestMethod.GET],
-            produces = [MediaType.APPLICATION_STREAM_JSON_VALUE])
+            produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
     suspend fun getThingsFlowStream(@PathVariable amount: Int): Flow<Thing> {
-        return playService.flowThing(amount).onEach{
-            println("$it + ${System.currentTimeMillis()}")
-        }
+        return playService.flowThing(amount)
     }
 
     @ExperimentalCoroutinesApi
-    @RequestMapping(path = ["/things/flux/{amount}"],
+    @RequestMapping(path = ["/things/flux"],
             method = [RequestMethod.GET],
-            produces = [MediaType.APPLICATION_STREAM_JSON_VALUE])
-    suspend fun getThingsAsFlux(@PathVariable amount: Int): Disposable {
-        return playService.fluxThing(amount).subscribe()
+            produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
+    fun getThingsAsFlux(): Flux<Thing> {
+        println("traditional endpoint")
+        return playService.fluxThing()
     }
-
-//    @ExperimentalCoroutinesApi
-//    @RequestMapping(path = ["/things/stream1/{amount}"],
-//            method = [RequestMethod.GET],
-//            produces = [MediaType.APPLICATION_STREAM_JSON_VALUE])
-//    suspend fun getThingsFlowStream1(@PathVariable amount: Int): Flow<Thing> {
-//        playService.flowThing(amount).collect{ it ->
-//            println(it)
-//        }
-//        return playService.flowThing(amount)
-//    }
-
 
 }

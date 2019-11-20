@@ -3,6 +3,7 @@ package de.neverland.omg.fluxplay.router
 import de.neverland.omg.fluxplay.handler.RequestHandlerMy
 import de.neverland.omg.fluxplay.model.Thing
 import de.neverland.omg.fluxplay.service.PlayService
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
@@ -19,10 +20,18 @@ class RouterApi (
 ) {
 
 
+    @ExperimentalCoroutinesApi
     @Bean
     fun customRouter() = coRouter {
         ("/things").nest{
             GET("/flow/alot/{amount}", accept(APPLICATION_JSON), requestHandler::alot)
+        }
+    }
+
+    @Bean
+    fun anotherRouter() = router {
+        ("/things").nest{
+            GET("/flux/alot/{amount}", accept(APPLICATION_JSON), requestHandler::alotFlux)
         }
     }
 

@@ -3,10 +3,7 @@ package de.neverland.omg.fluxplay.service
 import de.neverland.omg.fluxplay.model.Thing
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -35,26 +32,19 @@ class PlayService(
         return things
     }
 
-    @ExperimentalCoroutinesApi
-    fun flowThing(amount: Int): Flow<Thing> = runBlocking {
-        flow {
-            for (i in 1..amount) {
-                delay(200)
-                println("number $i")
-                emit(thingGenerator.createThing())
-            }
+    fun flowThing(amount: Int): Flow<Thing> = flow {
+        repeat(amount){
+            println("generate flow $it")
+            delay(1000)
+            emit(thingGenerator.createThing())
         }
     }
 
-    fun fluxThing(amount: Int): Flux<Thing> {
-//        val interval = Flux.interval(Duration.ofSeconds(1))
-        print("inside method - $amount")
-        val things = Flux.fromStream(Stream.generate {
-            println("genearte called")
+    fun fluxThing(): Flux<Thing> {
+        return Flux.fromStream(Stream.generate {
+            println("generate called")
+            Thread.sleep(1000)
             thingGenerator.createThing() })
-                .delayElements(Duration.ofSeconds(1))
-//        val mess = BiFunction<Thing, Long, Thing>{thing, long -> Thread.sleep(long); return@BiFunction thing}
-        return things
     }
 
     suspend fun getAmountOfThings(amount: Int): MutableList<Thing> {
