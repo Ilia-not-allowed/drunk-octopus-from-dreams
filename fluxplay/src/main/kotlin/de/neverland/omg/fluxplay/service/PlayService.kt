@@ -40,6 +40,14 @@ class PlayService(
         }
     }
 
+    fun flowThing(): Flow<Thing> = flow {
+        for(i in 1..2000){ // just for quick counting
+            println("generate flow $i")
+            delay(1000)
+            emit(thingGenerator.createThing())
+        }
+    }
+
     fun fluxThing(): Flux<Thing> {
         return Flux.fromStream(Stream.generate {
             println("generate called")

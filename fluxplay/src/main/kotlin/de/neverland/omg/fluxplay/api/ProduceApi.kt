@@ -42,11 +42,11 @@ class ProduceApi(
     }
 
     @ExperimentalCoroutinesApi
-    @RequestMapping(path = ["/things/stream/{amount}"],
+    @RequestMapping(path = ["/things/stream/"],
             method = [RequestMethod.GET],
             produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    suspend fun getThingsFlowStream(@PathVariable amount: Int): Flow<Thing> {
-        return playService.flowThing(amount)
+    suspend fun getThingsFlowStream(): Flow<Thing> {
+        return playService.flowThing()
     }
 
     @ExperimentalCoroutinesApi
